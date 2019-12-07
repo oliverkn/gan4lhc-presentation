@@ -244,16 +244,68 @@ with the value function given as
   \end{itemize}
 \end{frame}
 
-\subsection{GANs}
+\section{Benchmark setup}
+\begin{frame}{Benchmark setup}
+  \begin{itemize}
+      \item<1-> Goal: Measure ALAD's efficiency in discriminating BSM from SM events
+      \item<2-> Train ALAD on pure SM samples
+      \item<3-> Run trained model on a mixture of SM and BSM samples
+      \item<4-> From the anomaly scores we calculate evaluation metrics like ROC and LR+
+  \end{itemize}
+\end{frame}
 
-\subsection{GANs for anomaly detection}
-%naive idea
-%ALAD
-\subsection{Data format}
+\begin{frame}{Benchmark datasets}
+  \begin{itemize}
+      \item<1-> Benchmark datasets were provided by Cerri et al. (used to evaluate VAE)
+      \item<2-> Events were generated with \texttt{PYTHIA8} at $\sqrt{s}=13$~TeV
+      \item<3-> Dataset includes four most relevant SM processes:
+        \begin{itemize}
+            \item<4-> Inclusive W production: $W \rightarrow \ell\nu$
+            \item<5-> Inclusive Z production: $Z \rightarrow \ell\ell$
+            \item<6-> QCD multijet production
+            \item<7-> $t\Bar{t}$ production
+        \end{itemize}
+      \item<8-> and four BSM processes:
+      \begin{itemize}
+    \item<9-> $LQ\rightarrow b\tau$ (LQ=leptoquark with mass 80~GeV)
+    \item<10-> $A \rightarrow 4\ell$ (A=neutral scalar boson with mass 50~GeV)
+    \item<11-> $h^0 \rightarrow \tau\tau$ ($h^0$=neutral scalar boson with mass 60~GeV)
+    \item<12-> $h^\pm \rightarrow \tau\nu$ ($h^\pm$=charged scalar boson with mass 60~GeV)
+\end{itemize}
+  \end{itemize}
+\end{frame}
 
-\section{ALAD benchmark}
-\subsection{Setup}
-\subsection{Results}
+\begin{frame}{Benchmark results}{Receiver operating characteristic (ROC)}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.7\textwidth]{roc.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Benchmark results}{ROC and $\textup{LR}_+$ for the $L_1$ score}
+  \begin{itemize}
+      \item<1-> Positive likelihood ratio $\textup{LR}_+ = \frac{\textup{TPR}}{\textup{FPR}}$
+  \end{itemize}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=1\textwidth]{roc_lrp.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Benchmark results}{$L_1$ score distribution}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.7\textwidth]{score_dist.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Benchmark conclusion}
+  \begin{itemize}
+      \item<1-> ALAD has shown a performance at least comparable to VAE 
+      \item<2-> ALAD's model is generic while the VAE used by Cerri et al. has customized loss function for each HLF quantity
+      \item<3-> This flexibility could prove if a customized set of input quantities is desired (e.g. for certain BSM scenarios)
+  \end{itemize}
+\end{frame}
 
 \section{Top quark rediscovery}
 %\subsection{Idea}
