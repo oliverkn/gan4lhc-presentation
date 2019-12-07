@@ -45,6 +45,18 @@
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
+\usepackage{amsmath}
+\setbeamercovered{transparent}
+
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+\usepackage[many]{tcolorbox}
+\newtcolorbox{cross}{blank,breakable,parbox=false,
+  overlay={\draw[red,line width=1pt] (interior.south west)--(interior.north east);
+    \draw[red,line width=1pt] (interior.north west)--(interior.south east);}}
+
 \title{Anomaly detection based on generative adversarial networks for new physics mining at the LHC}
 
 \author{Oliver Knapp \inst{1}}
@@ -102,6 +114,34 @@
 % and table of contents.
 \section{Introduction and Basics}
 
+\begin{frame}{Overview}
+  \begin{itemize}
+      \item Main goal of LHC: search for deviations from the SM \pause
+      \item Typically fully-supervised hypothesis tests (model-dependent) \pause
+      \item Alternative: model-independent searches \pause
+      \item Cerri et al. proposed anomaly detection with VAE to implement this task \pause
+      \item We investigate a GAN based anomaly detector and
+      \begin{itemize}
+        \pause
+        \item benchmark and compare it with VAE
+        \pause
+        \item demonstrate its effectiveness for offline analysis by simulating a rediscovery of the top quark
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Anomaly detection based BSM search}
+  \begin{itemize}
+      \item<1-> It is expected that BSM events are much rarer compared to SM events $\implies$ Try to isolate rare events (outliers)
+      \item<2-> This task belongs to the field of anomaly detection (AD), which can be divided into three categories:
+      \begin{itemize}
+        \item<3-> Supervised AD $\rightarrow$ requires labeling samples as "normal" or "anomalous" \uncover<4->{\textcolor{red}{\xmark}}
+        \item<5-> Semi-supervised AD $\rightarrow$ training-set must only contain "normal" samples \uncover<6->{\textcolor{red}{\xmark}}
+        \item<7-> Unsupervised AD $\rightarrow$ training-set mostly consists of "normal" samples but may contain a small fraction of "anomalous" samples \uncover<8->{\textcolor{green}{\cmark}}
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \subsection{Anomaly detection}
 \subsection{AD for BSM search}
 \subsection{Related Work}
@@ -120,9 +160,9 @@
 \subsection{Results}
 
 \section{Top quark rediscovery}
-\subsection{Idea}
-\subsection{Data}
-\subsection{Analysis}
+%\subsection{Idea}
+%\subsection{Data}
+%\subsection{Analysis}
 
 \section{Conclusion}
 
