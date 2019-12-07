@@ -119,7 +119,7 @@
       \item Main goal of LHC: search for deviations from the SM \pause
       \item Typically fully-supervised hypothesis tests (model-dependent) \pause
       \item Alternative: model-independent searches \pause
-      \item Cerri et al. proposed anomaly detection with VAE to implement this task \pause
+      \item Cerri et al. proposed anomaly detection using variational autoencoders (VAE) to implement this task \pause
       \item We investigate a GAN based anomaly detector and
       \begin{itemize}
         \pause
@@ -136,17 +136,113 @@
       \item<2-> This task belongs to the field of anomaly detection (AD), which can be divided into three categories:
       \begin{itemize}
         \item<3-> Supervised AD $\rightarrow$ requires labeling samples as "normal" or "anomalous" \uncover<4->{\textcolor{red}{\xmark}}
-        \item<5-> Semi-supervised AD $\rightarrow$ training-set must only contain "normal" samples \uncover<6->{\textcolor{red}{\xmark}}
-        \item<7-> Unsupervised AD $\rightarrow$ training-set mostly consists of "normal" samples but may contain a small fraction of "anomalous" samples \uncover<8->{\textcolor{green}{\cmark}}
+        \item<5-> Semi-supervised AD $\rightarrow$ training set must only contain "normal" samples \uncover<6->{\textcolor{red}{\xmark}}
+        \item<7-> Unsupervised AD $\rightarrow$ training set mostly consists of "normal" samples but may contain a small fraction of "anomalous" samples \uncover<8->{\textcolor{green}{\cmark}}
       \end{itemize}
   \end{itemize}
 \end{frame}
 
-\subsection{Anomaly detection}
-\subsection{AD for BSM search}
 \subsection{Related Work}
 
 \section{GAN based anomaly detection}
+
+\begin{frame}{Motivating generative adversarial networks}
+  \begin{itemize}
+      \item<1-> Generative adversarial networks (GANs) have recently been very successful
+      \item<2-> Similar to VAE (used by Cerri et al.)
+      \item<3-> Both GAN and VAE are replicator neural networks
+      \item<4-> Objective is to learn the training set distribution
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Generative adversarial networks}
+  \begin{itemize}
+      \item<1-> Basic idea: two networks compete against each other
+      \item<2-> Generator network $G: \mathcal{Z} \rightarrow \mathcal{X}$ learns to generate new samples resembling the training set
+      \item<3-> Discriminator network $D:\mathcal{X} \rightarrow [0,1]$ learns to distinguish real samples from the generated ones
+      \item<4-> Training = solving saddle point problem
+      \begin{equation}
+      \underset{G}{\textup{min}}\, \underset{D}{\textup{max}}\, V(D,G),
+      \end{equation}
+      where
+      \begin{equation}
+        V(D,G)=\mathbb{E}_{x\sim p_\mathcal{X}}[log\,D(x)] + \mathbb{E}_{z\sim p_\mathcal{Z}}[log\,(1-D(G(z))]
+      \end{equation}
+      
+      \item<5-> Solution has property $p_\mathcal{X}=p_G$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{GAN for anomaly detection}
+  \begin{itemize}
+      \item<1-> Exploit $p_\mathcal{X}\approx p_G$ (after training)
+      \item<2-> $\textup{Prob[x \textup{is normal sample}]}=p_\mathcal{X}(x) \approx p_G(x)$
+      \item<3-> Problem: $p_G$ is not given explicitly, but can only be sampled from by taking $G(z)$ ($z$ uniformly sampled from latent space $\mathcal{Z}$)
+      \item<4-> Instead, we adopt a reconstruction based strategy similar to VAE:
+      \begin{equation}
+        A(x) \sim \underset{z}{\textup{min}} \; \textup{Loss}_{\textup{reco}}(x, G(z))
+      \end{equation}
+      \item<5-> Solving the minimization problem (e.g. with gradient descent) is computationally very expensive
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ALAD algorithm}
+  \begin{itemize}
+      \item<1-> Zenati et al. propose to use bidirectional-GANs (BiGAN)
+      \item<2-> An encoder network $E: \mathcal{X} \rightarrow \mathcal{Z}$ is simultaneously trained with the generator
+      \item<3-> The objective of the encoder is to approximate the inverse of the generator, i.e. $G(E(x))\approx x$
+      \item<4-> Achieved by solving the saddle point problem
+      \begin{align}
+    \underset{G,E}{\textup{min}}\, \underset{D_{xz}}{\textup{max}}\, V(D_{xz},E,G),
+\end{align}
+with the value function given as
+\begin{equation}
+\begin{split}
+    V(D_{xz},E,G)=& \mathbb{E}_{x\sim p_\mathcal{X}}[log\,D_{xz}(x, E(x))] + \\
+    & \mathbb{E}_{z\sim p_\mathcal{Z}}[log\,(1-D_{xz}(G(z), z)]
+\end{split}
+\end{equation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ALAD algorithm}
+  \begin{itemize}
+      \item<1-> Training process does not necessarily converge $\rightarrow$ further modifications needed.
+      \item<2-> Add discriminator $D_{xx}$ to enforce cycle consistency $G(E(x))\approx x$
+      \item<3-> Add discriminator $D_{zz}$ to regularize latent space
+  \end{itemize}
+  
+  \begin{figure}[!htb]
+    \begin{center}
+    \includegraphics[width=0.7\textwidth]{dladded}
+    \caption{Adapted from "Adversarially learned anomaly detection" by Zenati et al.}
+    \label{fig:alad}
+    \end{center}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{ALAD anomaly scores}
+  \begin{itemize}
+      \item<1-> Four proposed anomaly score models
+      \item<2-> $L_1$-score: $A(x)=||x-G(E(x))||_{1}$
+      \item<3-> $L_2$-score: $A(x)=||x-G(E(x))||_{2}$
+      \item<4-> Logits-score: $A(x)=log(D_{xx}(x, G(E(x)))$
+      \item<5-> Features-score: $A(x)=||f_{xx}(x,x) - f_{xx}(x, G(E(x)))||_1$, where $f_{xx}(\cdot,\cdot)$ are the activation values in the last hidden layer of $D_{xx}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Data format}
+  \begin{itemize}
+      \item<1-> One events recorded by the CMS detector contains $O(10^3)$ particles resulting in $O(10^4)$ parameters
+      \item<2-> To reduce dimensionality an event is represented with high-level-features (HLF)
+      \item<3-> Jet quantities: $H_T$, $M_J$, $N_J$, $N_b$
+      \item<4-> Muon/electron quantities: $p_{T,TOT}^\mu$, $M_\mu$, $N_\mu$, $p_{T,TOT}^e$, $M_e$, $N_e$
+      \item<5-> Particle multiplicities: $N_{neu}$, $N_{ch}$, $N_\gamma$
+      \item<6-> Missing transverse momentum $p_T^\textup{miss}$
+      \item<7-> Selected lepton $\ell$ quantities: $p_T^\ell$, $\eta_\ell$, $q_\ell$, $\textup{IsEle}$, $\textup{Iso}_{ch}^\ell$, $\textup{Iso}_{neu}^\ell$, $\textup{Iso}_{\gamma}^\ell$
+      \item Selected lepton and missing system: $M_T$, $p_{T,\parallel}^\textup{miss}$, $p_{T,\perp}^\textup{miss}$
+  \end{itemize}
+\end{frame}
 
 \subsection{GANs}
 
