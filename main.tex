@@ -91,6 +91,12 @@
 
 % Delete this, if you do not want the table of contents to pop up at
 % the beginning of each subsection:
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
 \AtBeginSubsection[]
 {
   \begin{frame}<beamer>{Outline}
@@ -112,7 +118,7 @@
 
 % Section and subsections will appear in the presentation overview
 % and table of contents.
-\section{Introduction and Basics}
+\section{Introduction}
 
 \begin{frame}{Overview}
   \begin{itemize}
@@ -142,16 +148,13 @@
   \end{itemize}
 \end{frame}
 
-\subsection{Related Work}
-
 \section{GAN based anomaly detection}
 
 \begin{frame}{Motivating generative adversarial networks}
   \begin{itemize}
       \item<1-> Generative adversarial networks (GANs) have recently been very successful
       \item<2-> Similar to VAE (used by Cerri et al.)
-      \item<3-> Both GAN and VAE are replicator neural networks
-      \item<4-> Objective is to learn the training set distribution
+      \item<3-> Both GAN and VAE aim to learn the training set distribution
   \end{itemize}
 \end{frame}
 
@@ -211,8 +214,7 @@ with the value function given as
       \item<2-> Add discriminator $D_{xx}$ to enforce cycle consistency $G(E(x))\approx x$
       \item<3-> Add discriminator $D_{zz}$ to regularize latent space
   \end{itemize}
-  
-  \begin{figure}[!htb]
+  \begin{figure}[]
     \begin{center}
     \includegraphics[width=0.7\textwidth]{dladded}
     \caption{Adapted from "Adversarially learned anomaly detection" by Zenati et al.}
@@ -233,24 +235,25 @@ with the value function given as
 
 \begin{frame}{Data format}
   \begin{itemize}
-      \item<1-> One events recorded by the CMS detector contains $O(10^3)$ particles resulting in $O(10^4)$ parameters
+      \item<1-> One event recorded by the CMS detector contains $O(10^3)$ particles resulting in $O(10^4)$ parameters
       \item<2-> To reduce dimensionality an event is represented with high-level-features (HLF)
       \item<3-> Jet quantities: $H_T$, $M_J$, $N_J$, $N_b$
       \item<4-> Muon/electron quantities: $p_{T,TOT}^\mu$, $M_\mu$, $N_\mu$, $p_{T,TOT}^e$, $M_e$, $N_e$
       \item<5-> Particle multiplicities: $N_{neu}$, $N_{ch}$, $N_\gamma$
       \item<6-> Missing transverse momentum $p_T^\textup{miss}$
       \item<7-> Selected lepton $\ell$ quantities: $p_T^\ell$, $\eta_\ell$, $q_\ell$, $\textup{IsEle}$, $\textup{Iso}_{ch}^\ell$, $\textup{Iso}_{neu}^\ell$, $\textup{Iso}_{\gamma}^\ell$
-      \item Selected lepton and missing system: $M_T$, $p_{T,\parallel}^\textup{miss}$, $p_{T,\perp}^\textup{miss}$
+      \item<8-> Selected lepton and missing system: $M_T$, $p_{T,\parallel}^\textup{miss}$, $p_{T,\perp}^\textup{miss}$
   \end{itemize}
 \end{frame}
 
-\section{Benchmark setup}
+\section{Benchmark}
+
 \begin{frame}{Benchmark setup}
   \begin{itemize}
       \item<1-> Goal: Measure ALAD's efficiency in discriminating BSM from SM events
       \item<2-> Train ALAD on pure SM samples
       \item<3-> Run trained model on a mixture of SM and BSM samples
-      \item<4-> From the anomaly scores we calculate evaluation metrics like ROC and LR+
+      \item<4-> From the anomaly scores we calculate evaluation metrics like ROC and $\textup{LR}_+$
   \end{itemize}
 \end{frame}
 
@@ -308,6 +311,7 @@ with the value function given as
 \end{frame}
 
 \section{Top quark rediscovery}
+
 \begin{frame}{Overview}
   \begin{itemize}
       \item<1-> Benchmark only investigated semi-supervised problem
@@ -315,9 +319,11 @@ with the value function given as
       \item<3-> They propose to employ anomaly detection in the trigger system
       \item<4-> We present an anomaly detection based model-independent offline analysis strategy
       \item<5-> We demonstrate the effectiveness of this strategy by simulating a rediscovery of the top quark
-      \item<6-> From now on assume existence of top quark is neither experimentally nor theoretically established, i.e. top quark is BSM
+      \item<6-> From now on let's assume the existence of top quark is neither experimentally nor theoretically established
   \end{itemize}
 \end{frame}
+
+\subsection{Offline analysis}
 
 \begin{frame}{Strategy}
   \begin{itemize}
@@ -431,6 +437,7 @@ Assume a signal-to-noise (SNR) ratio before anomaly selection of $10^{-3}$ and a
 \begin{itemize}
     \item<1-> Idea: select events where $\text{ASTF}(q)_{\text{data}} \gg \text{ASTF}(q)_{\text{background}}$
     \item<2-> Fulfilled for events in the bins $N_J\geq 6$ and $N_b\geq 2$
+    \item<3-> Looking for a process that produces many high energy jets, some of which originating from b quarks.
 \end{itemize}
 \end{frame}
 
@@ -442,7 +449,6 @@ Assume a signal-to-noise (SNR) ratio before anomaly selection of $10^{-3}$ and a
 \begin{itemize}
     \item<1-> Almost all background events have vanished
     \item<2-> $\implies$ Remaining events in data must stem from a missing process (signal)
-    \item<3-> Looking for a process that produces many high energy jets, some of which originating from b quarks.
 \end{itemize}
 \end{frame}
 
@@ -464,12 +470,11 @@ Assume a signal-to-noise (SNR) ratio before anomaly selection of $10^{-3}$ and a
         \item<3-> $pp \rightarrow t\bar{t}$ with $\sigma_{t\bar{t}}=164\,\textup{pb}$ at $\sqrt{s}=8\,\textup{TeV}$ (LO)
         \item<4-> Top quark decays before it can form hadrons
         \item<5-> Decays almost exclusively in $t \rightarrow W^+ b$ (due to $V_{tb}=0.999$)
-        \item Overall: $t \rightarrow W^+ b \rightarrow W^+ + \textup{b-Jet} \implies$ high number of b-tagged jets 
+        \item<6-> Overall: $t \rightarrow W^+ b \rightarrow W^+ + \textup{b-Jet} \implies$ high number of b-tagged jets 
+        \item<7-> Single top quark production ($\sigma_{t}=87.7 \pm 5.8 \, \textup{pb}$ at $\sqrt{s}=8\,\textup{TeV}$) is removed by postselection with $N_b\geq 2$
     \end{itemize}
     
-    \item<6-> Single top quark production ($\sigma_{t}=87.7 \pm 5.8 \, \textup{pb}$ at $\sqrt{s}=8\,\textup{TeV}$) is removed by postselection with $N_b\geq 2$
-    
-    \item<7-> We add $pp \rightarrow t\bar{t}$ to the background to see if this can explain the miss match.
+    \item<8-> We add $pp \rightarrow t\bar{t}$ to the background to see if this can explain the miss match.
 \end{itemize}
 \end{frame}
 
@@ -479,7 +484,7 @@ Assume a signal-to-noise (SNR) ratio before anomaly selection of $10^{-3}$ and a
 \end{center}
 
 \begin{itemize}
-    \item<1-> Background +$t\bar{t}$ agrees closely with data
+    \item<1-> Background + $t\bar{t}$ agrees closely with data
 \end{itemize}
 \end{frame}
 
