@@ -308,9 +308,209 @@ with the value function given as
 \end{frame}
 
 \section{Top quark rediscovery}
-%\subsection{Idea}
-%\subsection{Data}
-%\subsection{Analysis}
+\begin{frame}{Overview}
+  \begin{itemize}
+      \item<1-> Benchmark only investigated semi-supervised problem
+      \item<2-> Cerri et al. indirectly demonstrated that VAE can be trained on data
+      \item<3-> They propose to employ anomaly detection in the trigger system
+      \item<4-> We present an anomaly detection based model-independent offline analysis strategy
+      \item<5-> We demonstrate the effectiveness of this strategy by simulating a rediscovery of the top quark
+      \item<6-> From now on assume existence of top quark is neither experimentally nor theoretically established, i.e. top quark is BSM
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Strategy}
+  \begin{itemize}
+      \item<1-> Model background processes (SM without top) with MC simulation
+      \item<2-> Run ALAD on both data and MC background
+      \item<3-> Expectation: Anomaly selection amplifies signal events in data $\implies$ easier to detect discrepancy
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Data description}
+  \begin{itemize}
+      \item<1-> data = \textit{SingleMu primary dataset from RunB of 2012} ($\int\!L = 4429\,\textup{pb}^{-1}$)
+      \item<2-> Background modeling:
+      \begin{itemize}
+          \item<3-> Exclusive W production with 1, 2 or 3 jets: $pp \rightarrow W+\textup{Jets} \rightarrow \ell\nu$
+          \item<4-> Exclusive Drell-Yan process with 1, 2, 3 or 4 jets: $pp \rightarrow Z/\gamma^* + \textup{Jets} \rightarrow \ell\ell$
+      \end{itemize}
+  \end{itemize}
+\uncover<5->{
+  \begin{table}[]
+\centering
+\begin{tabular}{l|r|r}
+\hline
+Process   & $\sigma$ [pb] & K-factor \\ \hline
+$W$ + 1Jet    & 4480         & 1.23 \\
+$W$ + 2Jets   & 1435         & 1.23 \\
+$W$ + 3Jets   & 304          & 1.23 \\
+$Z$/$\gamma^*$ + 1Jet  & 561     & 1.23 \\
+$Z$/$\gamma^*$ + 2Jets   & 181     & 1.23 \\
+$Z$/$\gamma^*$ + 3Jets   & 51     & 1.23 \\
+$Z$/$\gamma^*$ + 4Jets   & 15     & 1.23 \\
+$t\bar{t}$ + Jets        & 164  & 1.66 \\
+\hline
+\end{tabular}
+\caption{LO cross section at $\sqrt{s}=8$~TeV for background processes.}
+\label{table:mc-datasets}
+\end{table}}
+  
+\end{frame}
+
+\begin{frame}{Preprocessing}
+  \begin{itemize}
+      \item<1-> Wrote Python script to converted AOD data files to HLF quantities (converted $O(100)$~TB of data)
+      \item<2-> Most dominant processes not modeled: QCD, $pp \rightarrow W$ and $pp \rightarrow Z/\gamma^*$
+      \item<3-> Need preselection: 
+      \begin{itemize}
+          \item<4-> $p_T>23$~GeV, $\left | \eta \right | < 1.4$ and $\text{Iso}<\textup{0.1}$ to remove QCD
+          \item<5-> $N_J\geq 2$ to remove $pp \rightarrow W$ and $pp \rightarrow Z/\gamma^*$
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Anomaly selection}
+  \begin{itemize}
+      \item<1-> Event is considered anomalous $\iff$ $L_1$ anomaly score exceeds fixed threshold
+      \item<2-> Threshold is set s.t. the fraction of selected events is $O(10^{-3})$ 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Anomaly selection results}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+    \begin{center}
+     \includegraphics[width=1\textwidth]{data.pdf}
+     \end{center}
+\end{column}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{center}
+     \includegraphics[width=1\textwidth]{mc_b.pdf}
+     \end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Anomaly selection transfer function}
+  \begin{itemize}
+      \item<1-> One can see with the naked eye a difference in the b-tagged jets $N_b$
+      \item<2-> Cannot directly compare data with MC in joint plot
+      \item<3-> Instead we propose to consider (what we call) the anomaly selection transfer function (ASTF)
+      \begin{equation}
+      \textup{ASTF}(q) = \frac{\textup{PDF}_{\textup{AS}}(q)}{\textup{PDF}_{0}(q)},
+      \end{equation}
+      \item<4-> The ASTF gives the anomaly selection acceptance rate per bin
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Anomaly selection transfer function}
+    \begin{center}
+     \includegraphics[width=1\textwidth]{astf.pdf}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Postselection}
+\begin{itemize}
+    \item<1-> After anomaly selection a large fraction of background events may still remain
+\end{itemize}
+\uncover<2->{
+\begin{example}
+Assume a signal-to-noise (SNR) ratio before anomaly selection of $10^{-3}$ and a positive likelihood ratio of $10^2$. The SNR after anomaly selection is $10^{-1}$, i.e. 10 background events for every signal event.
+\end{example}}
+\begin{itemize}
+    \item<3-> To further improve the SNR we exploit the ASTF
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Postselection}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{astf.pdf}
+\end{center}
+
+\begin{itemize}
+    \item<1-> Idea: select events where $\text{ASTF}(q)_{\text{data}} \gg \text{ASTF}(q)_{\text{background}}$
+    \item<2-> Fulfilled for events in the bins $N_J\geq 6$ and $N_b\geq 2$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Postselection result}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{post_b.pdf}
+\end{center}
+
+\begin{itemize}
+    \item<1-> Almost all background events have vanished
+    \item<2-> $\implies$ Remaining events in data must stem from a missing process (signal)
+    \item<3-> Looking for a process that produces many high energy jets, some of which originating from b quarks.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Discussion}
+\begin{itemize}
+    \item<1-> At no point did we specify any property of the signal. Yet we were able to obtain an almost pure sample of signal events.
+    \item<2-> Next step: Release samples in a dedicated dataset
+    \item<3-> Theorists can study those events (e.g. with visual inspection or studies of reconstructed objects)
+    \item<4-> Finally, this process would lead to a proposal for an extension of the SM to explain the signal
+\end{itemize}
+\end{frame}
+
+\subsection{Verification of the discovery}
+\begin{frame}{Overview}
+\begin{itemize}
+    \item<1-> Go back to present where the properties of the top quark are well understood
+    \item<2-> Theory predicts:
+    \begin{itemize}
+        \item<3-> $pp \rightarrow t\bar{t}$ with $\sigma_{t\bar{t}}=164\,\textup{pb}$ at $\sqrt{s}=8\,\textup{TeV}$ (LO)
+        \item<4-> Top quark decays before it can form hadrons
+        \item<5-> Decays almost exclusively in $t \rightarrow W^+ b$ (due to $V_{tb}=0.999$)
+        \item Overall: $t \rightarrow W^+ b \rightarrow W^+ + \textup{b-Jet} \implies$ high number of b-tagged jets 
+    \end{itemize}
+    
+    \item<6-> Single top quark production ($\sigma_{t}=87.7 \pm 5.8 \, \textup{pb}$ at $\sqrt{s}=8\,\textup{TeV}$) is removed by postselection with $N_b\geq 2$
+    
+    \item<7-> We add $pp \rightarrow t\bar{t}$ to the background to see if this can explain the miss match.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Distributions including the top quark}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{post_tt.pdf}
+\end{center}
+
+\begin{itemize}
+    \item<1-> Background +$t\bar{t}$ agrees closely with data
+\end{itemize}
+\end{frame}
+
+\subsection{Discussion}
+\begin{frame}{Distributions including the top quark}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{mc_tt.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{ROC and $\textup{LR}_+$ for $t\bar{t}$}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{roc-tt.pdf}
+\end{center}
+\begin{itemize}
+    \item<1-> Working point set at $O(10^{-3}) \implies \textup{LR}_+ \sim 20$ 
+    \item<2-> Low $\textup{LR}_+$ probably due to relatively high abundance of $t\bar{t}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Discussion}
+
+\begin{itemize}
+    \item<1-> Extracted preliminary properties of $t\bar{t}$ events with anomaly selection
+    \item<2-> Obtained an almost pure sample of $t\bar{t}$ events by analyzing the ASTF
+    \item<3-> No assumption were made about this process $\implies$ achieved model-independent offline analysis
+    \item<4-> Admittedly, we were lucky to already consider $N_J$ and $N_b$, which were crucial for the analysis and had the property $\text{ASTF}(q)_{\text{data}} \gg \text{ASTF}(q)_{\text{background}}$
+    \item<5-> In practice: Compute ASTF for all possible quantities until one finds a quantity satisfying $\text{ASTF}(q)_{\text{data}} \gg \text{ASTF}(q)_{\text{background}}$
+\end{itemize}
+\end{frame}
+
 
 \section{Conclusion}
 
