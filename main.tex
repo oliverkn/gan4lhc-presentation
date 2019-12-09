@@ -179,7 +179,7 @@
 \begin{frame}{GAN for anomaly detection}
   \begin{itemize}
       \item<1-> Exploit $p_\mathcal{X}\approx p_G$ (after training)
-      \item<2-> $\textup{Prob[x \textup{is normal sample}]}=p_\mathcal{X}(x) \approx p_G(x)$
+      \item<2-> $\textup{Prob[x \textup{is normal sample}]}\sim p_\mathcal{X}(x) \approx p_G(x)$
       \item<3-> Problem: $p_G$ is not given explicitly, but can only be sampled from by taking $G(z)$ ($z$ uniformly sampled from latent space $\mathcal{Z}$)
       \item<4-> Instead, we adopt a reconstruction based strategy similar to VAE:
       \begin{equation}
@@ -335,7 +335,7 @@ with the value function given as
 
 \begin{frame}{Data description}
   \begin{itemize}
-      \item<1-> data = \textit{SingleMu primary dataset from RunB of 2012} ($\int\!L = 4429\,\textup{pb}^{-1}$)
+      \item<1-> data = \textit{SingleMu primary dataset from RunB of 2012} ($\int\!L = 4.429\,\textup{fb}^{-1}$)
       \item<2-> Background modeling:
       \begin{itemize}
           \item<3-> Exclusive W production with 1, 2 or 3 jets: $pp \rightarrow W+\textup{Jets} \rightarrow \ell\nu$
@@ -510,7 +510,7 @@ Assume a signal-to-noise (SNR) ratio before anomaly selection of $10^{-3}$ and a
 \begin{itemize}
     \item<1-> Extracted preliminary properties of $t\bar{t}$ events with anomaly selection
     \item<2-> Obtained an almost pure sample of $t\bar{t}$ events by analyzing the ASTF
-    \item<3-> No assumption were made about this process $\implies$ achieved model-independent offline analysis
+    \item<3-> No assumptions were made about this process $\implies$ achieved model-independent offline analysis
     \item<4-> Admittedly, we were lucky to already consider $N_J$ and $N_b$, which were crucial for the analysis and had the property $\text{ASTF}(q)_{\text{data}} \gg \text{ASTF}(q)_{\text{background}}$
     \item<5-> In practice: Compute ASTF for all possible quantities until one finds a quantity satisfying $\text{ASTF}(q)_{\text{data}} \gg \text{ASTF}(q)_{\text{background}}$
 \end{itemize}
